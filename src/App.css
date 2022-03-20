@@ -1,0 +1,17 @@
+/**** @Author: Francisco Zapata ****/
+*,
+*:before,
+*:after {
+	margin: 0;
+	padding: 0;
+	box-sizing: inherit;
+	text-decoration: none;
+	list-style: none;
+}
+html {
+	box-sizing: border-box;
+}
+ul {
+	margin: 0;
+	padding: 0;
+}
