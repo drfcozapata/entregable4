@@ -10,6 +10,7 @@ import UsersList from './components/UsersList';
 function App() {
 	const [users, setUsers] = useState([]);
 	const [openModal, setOpenModal] = useState(false);
+	const [userEdit, setUserEdit] = useState(false);
 
 	const getUsers = () => {
 		axios
@@ -22,9 +23,10 @@ function App() {
 	}, []);
 
 	const addUser = user => {
-		axios
-			.post('https://users-crud1.herokuapp.com/users/', user)
-			.then(() => getUsers());
+		axios.post('https://users-crud1.herokuapp.com/users/', user).then(() => {
+			getUsers();
+			setOpenModal(false);
+		});
 	};
 
 	const deleteUser = id => {
@@ -33,12 +35,48 @@ function App() {
 			.then(() => getUsers());
 	};
 
+	const selectUser = user => {
+		axios.get(`https://users-crud1.herokuapp.com/users/${user.id}`).then(() => {
+			console.log(user);
+			setUserEdit(user);
+			setOpenModal(true);
+		});
+	};
+
+	const cancelEdit = () => {
+		setUserEdit(false);
+		setOpenModal(false);
+	};
+
+	const updateUser = user => {
+		axios
+			.put(`https://users-crud1.herokuapp.com/users/${user.id}/`, user)
+			.then(() => {
+				setUserEdit(false);
+				setOpenModal(false);
+				getUsers();
+			});
+	};
+
 	return (
 		<div className="App">
 			<Header />
-			<UsersList users={users} deleteUser={deleteUser} />
+			<h2 className="app-title text-center text-uppercase">Usuarios</h2>
+			<UsersList
+				users={users}
+				deleteUser={deleteUser}
+				selectUser={selectUser}
+				userEdit={userEdit}
+			/>
 			<Footer />
-			{!!openModal && <Modal addUser={addUser} />}
+			{!!openModal && (
+				<Modal
+					addUser={addUser}
+					userEdit={userEdit}
+					cancelEdit={cancelEdit}
+					updateUser={updateUser}
+				/>
+			)}
 			<CreateUserButton setOpenModal={setOpenModal} />
 		</div>
 	);
